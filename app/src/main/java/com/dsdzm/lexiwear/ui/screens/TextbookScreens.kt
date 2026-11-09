@@ -101,6 +101,7 @@ fun VersionsScreen(
             state = rememberScalingLazyListState(),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 24.dp),
+            autoCentering = null,
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             item { TopBar("教材词表", onBack) }
@@ -148,6 +149,7 @@ fun BooksScreen(
             state = rememberScalingLazyListState(),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 24.dp),
+            autoCentering = null,
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             item { TopBar("选择册次", onBack) }
@@ -200,6 +202,7 @@ fun UnitsScreen(
             state = rememberScalingLazyListState(),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 24.dp),
+            autoCentering = null,
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             item { TopBar("选择单元", onBack) }
@@ -254,6 +257,7 @@ fun UnitWordsScreen(
             state = rememberScalingLazyListState(),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 24.dp),
+            autoCentering = null,
             verticalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             item { TopBar("单元词表", onBack) }

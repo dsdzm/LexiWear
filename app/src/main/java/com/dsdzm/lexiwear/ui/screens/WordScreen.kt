@@ -64,6 +64,7 @@ fun WordScreen(
             state = rememberScalingLazyListState(),
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 24.dp),
+            autoCentering = null,
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             item { TopBar("词典", onBack) }

@@ -126,7 +126,8 @@ fun SearchScreen(
                 state = rememberScalingLazyListState(),
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
+                autoCentering = null,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 when {
                     query.isBlank() -> item {
