@@ -36,8 +36,23 @@ Wear OS 上的高中英语离线词典。用 **Compose for Wear OS** 构建，Ma
 | --- | --- |
 | 最低系统 | **Android 8.0（API 26）**，即 Wear OS 2.x 及以上 |
 | 目标系统 | Android 16（API 36） |
-| 已验证 | 在 Robolectric API 26 环境离屏渲染四个主界面，中文、音标、圆形安全区均正常（截图见 `docs/screenshots/api26/`） |
+| 已验证 | 在 Robolectric API 26 环境离屏渲染四个主界面，中文、音标、圆形安全区均正常（截图见 `docs/screenshots/api26/`）；API 28 下真实 assets 全量读取 + 完整启动 `MainActivity` |
 | 附加依赖 | 无。`androidx.wear.compose:compose-material3:1.6.2` 自身 minSdk 为 25，降级到 26 无需移除任何功能 |
+
+## 更新记录
+
+### v1.0.2（修复启动闪退）
+
+v1.0.1 一启动就崩，原因是 **aapt 打包时会自动解压 assets 中以 `.gz` 结尾的文件并去掉该后缀**：构建时是 `lex/a.json.gz`，APK 里却是 `lex/a.json`，而代码按 `.json.gz` 打开，直接 `FileNotFoundException`。
+
+修复方式：
+- 资源改名 `*.json.gzb`，避开 aapt 的 `.gz` 特殊处理，压缩态得以保留（APK 仍 9.7 MB）
+- `readAsset()` 改为按候选名回退，并用 gzip 魔数（`1F 8B`）判断内容是否压缩，资源即使被解压成明文也能读
+- 新增 `Api28StartupTest` / `Api28LaunchTest`，在 API 28 下跑真实 assets 与真实入口，防止回归
+
+### v1.0.1（适配 Android 8.0+）
+
+`minSdk` 30 → 26，覆盖 Wear OS 2.x 及以上的在役手表。
 
 ## 数据规模
 
