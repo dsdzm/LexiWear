@@ -30,6 +30,15 @@ Wear OS 上的高中英语离线词典。用 **Compose for Wear OS** 构建，Ma
 - 搜索防抖、分片懒加载（按首字母加载词库，最多缓存 6 片）
 - 最近查询记录
 
+## 系统兼容性
+
+| 项 | 说明 |
+| --- | --- |
+| 最低系统 | **Android 8.0（API 26）**，即 Wear OS 2.x 及以上 |
+| 目标系统 | Android 16（API 36） |
+| 已验证 | 在 Robolectric API 26 环境离屏渲染四个主界面，中文、音标、圆形安全区均正常（截图见 `docs/screenshots/api26/`） |
+| 附加依赖 | 无。`androidx.wear.compose:compose-material3:1.6.2` 自身 minSdk 为 25，降级到 26 无需移除任何功能 |
+
 ## 数据规模
 
 | 项 | 数量 |
@@ -48,7 +57,7 @@ App **不申请网络权限**，全部数据以 gzip 资源内置。
 - Kotlin 2.2.21 / AGP 8.13.2 / Gradle 8.13 / JDK 17
 - `androidx.wear.compose:compose-material3:1.6.2`（含 `MotionScheme.expressive()`）
 - Compose 1.9（`androidx.compose.animation` + 自定义 M3E 调色板）
-- compileSdk 36 / minSdk 30（Wear OS 3+）/ targetSdk 36
+- compileSdk 36 / **minSdk 26（Android 8.0+，Wear OS 2.x 起）** / targetSdk 36
 - 数据层：`org.json` + `GZIPInputStream`，无第三方序列化依赖
 
 ## 构建
