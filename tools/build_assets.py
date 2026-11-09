@@ -191,27 +191,28 @@ def main():
         shards.setdefault(key, {})[w] = e
     index.sort(key=lambda x: x['w'].lower())
 
+    # 后缀用 .json.gzb 而非 .json.gz：aapt 会自动解压 *.gz 并去掉该后缀，导致运行时找不到文件
     def dump_gz(obj, path):
         raw = json.dumps(obj, ensure_ascii=False, separators=(',', ':')).encode()
         with gzip.open(path, 'wb', compresslevel=9) as fh:
             fh.write(raw)
         return len(raw)
 
-    raw_total = dump_gz(index, os.path.join(args.out, 'lex', 'index.json.gz'))
+    raw_total = dump_gz(index, os.path.join(args.out, 'lex', 'index.json.gzb'))
     for k, m in shards.items():
-        raw_total += dump_gz(m, os.path.join(args.out, 'lex', f'{k}.json.gz'))
+        raw_total += dump_gz(m, os.path.join(args.out, 'lex', f'{k}.json.gzb'))
 
     for b in books:
         units = [{'name': u['name'], 'words': book_units.get(b['id'], {}).get(u['name'], [])}
                  for u in b['units']]
         dump_gz({'id': b['id'], 'name': b['name'], 'grade': b['grade'],
                  'version': versions[b['v']]['name'], 'units': units},
-                os.path.join(args.out, 'tb', f'{b["id"]}.json.gz'))
+                os.path.join(args.out, 'tb', f'{b["id"]}.json.gzb'))
 
     for i, v in enumerate(versions):
         v['books'] = [{'id': b['id'], 'name': b['name'], 'grade': b['grade'],
                        'units': len(b['units'])} for b in books if b['v'] == i]
-    dump_gz({'versions': versions}, os.path.join(args.out, 'tb', 'index.json.gz'))
+    dump_gz({'versions': versions}, os.path.join(args.out, 'tb', 'index.json.gzb'))
     json.dump({'builtAt': time.strftime('%Y-%m-%d'), 'entries': len(cache),
                'words': len(words), 'versions': len(versions), 'books': len(books),
                'units': len(toc), 'rawBytes': raw_total},
@@ -230,7 +231,7 @@ def main():
             item['o'] = occur[w][:5]
         if item:
             enrich[w] = item
-    dump_gz(enrich, os.path.join(args.out, 'lex', 'enrich.json.gz'))
+    dump_gz(enrich, os.path.join(args.out, 'lex', 'enrich.json.gzb'))
     print('enrich entries', len(enrich), flush=True)
 
 

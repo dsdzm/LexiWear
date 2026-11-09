@@ -38,9 +38,35 @@ class AssetLexiRepository(private val context: Context) : LexiRepository {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, TbBook>) = size > 3
     }
 
-    private fun readGz(name: String): String = context.assets.open(name).use { input ->
-        GZIPInputStream(input).bufferedReader(Charsets.UTF_8).use { it.readText() }
+    /**
+     * 读取 assets 中的 JSON 资源。
+     *
+     * 注意：aapt 打包时会自动解压以 `.gz` 结尾的 assets 并去掉该后缀，
+     * 因此这里不写死文件名，而是按候选名依次尝试，并用 gzip 魔数（1F 8B）判断内容是否压缩。
+     * 这样无论资源最终是 `x.json.gzb`、`x.json.gz` 还是已被解压成 `x.json`，都能正确读取。
+     */
+    private fun readAsset(base: String): String {
+        val candidates = listOf("$base.json.gzb", "$base.json.gz", "$base.json", base)
+        var last: Throwable? = null
+        for (name in candidates) {
+            val bytes = try {
+                context.assets.open(name).use { it.readBytes() }
+            } catch (t: Throwable) {
+                last = t
+                continue
+            }
+            val gzipped = bytes.size > 2 &&
+                bytes[0] == 0x1F.toByte() && bytes[1] == 0x8B.toByte()
+            return if (gzipped) {
+                GZIPInputStream(bytes.inputStream()).bufferedReader(Charsets.UTF_8).use { it.readText() }
+            } else {
+                String(bytes, Charsets.UTF_8)
+            }
+        }
+        throw java.io.FileNotFoundException("asset not found: ${candidates.joinToString(", ")} (last=$last)")
     }
+
+    private fun readGz(name: String): String = readAsset(name.removeSuffix(".json.gz"))
 
     private fun readPlain(name: String): String =
         context.assets.open(name).bufferedReader(Charsets.UTF_8).use { it.readText() }
